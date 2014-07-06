@@ -23,7 +23,7 @@ module.exports = function (grunt) {
 	 */
 	var getArchiveFunction = function (mode) {
 		return function () {
-			return 'build/hndl-' + grunt.config ('pkg').version + '-' + grunt.config ('gitinfo').local.branch.current.shortSHA + '.' + mode;
+			return 'dist/hndl-' + grunt.config ('pkg').version + '-' + grunt.config ('gitinfo').local.branch.current.shortSHA + '.' + mode;
 		};
 	};
 
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
 		 * Clean Build
 		 */
 		clean:			{
-			build:			['build']
+			build:			['build', 'dist']
 		},
 
 		/**
@@ -80,9 +80,9 @@ module.exports = function (grunt) {
 				},
 
 				expand:			true,
-				cwd:			'build/',
+				cwd:			'dist/',
 				src:			'*.tar',
-				dest:			'build/'
+				dest:			'dist/'
 			},
 
 			/**
