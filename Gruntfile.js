@@ -16,6 +16,17 @@
 module.exports = function (grunt) {
 	'use strict';
 
+	/**
+	 * Generates an archive function.
+	 * @param mode The archive mode.
+	 * @returns {Function}
+	 */
+	var getArchiveFunction = function (mode) {
+		return function () {
+			return 'build/hndl-' + grunt.config ('pkg').version + '-' + grunt.config ('gitinfo').local.branch.current.shortSHA + '.' + mode;
+		};
+	};
+
 	// initialize configuration
 	grunt.initConfig ({
 		/**
@@ -31,6 +42,72 @@ module.exports = function (grunt) {
 		},
 
 		/**
+		 * Creates packages for distribution
+		 */
+		compress:		{
+
+			/**
+			 * An uncompressed tar archive
+			 */
+			tar:			{
+
+				/**
+				 * Archive options
+				 */
+				options:		{
+					archive:		getArchiveFunction ('tar')
+				},
+
+				/**
+				 * Archive contents
+				 */
+				expand:			true,
+				cwd:			'build/',
+				src:			['*.js', 'LICENSE'],
+				dest:			'.'
+			},
+
+			/**
+			 * A compressed tar.gzip archive
+			 */
+			gzip:			{
+
+				/**
+				 * Archive options
+				 */
+				options:		{
+					mode:			'gzip'
+				},
+
+				expand:			true,
+				cwd:			'build/',
+				src:			'*.tar',
+				dest:			'build/'
+			},
+
+			/**
+			 * An uncompressed zip archive
+			 */
+			zip:			{
+
+				/**
+				 * Archive options
+				 */
+				options:		{
+					archive:		getArchiveFunction ('zip')
+				},
+
+				/**
+				 * Archive contents
+				 */
+				expand:			true,
+				cwd:			'build/',
+				src:			['*.js', 'LICENSE'],
+				dest:			'.'
+			}
+		},
+
+		/**
 		 * Copy Files
 		 */
 		copy:			{
@@ -41,6 +118,11 @@ module.exports = function (grunt) {
 			src:			{
 				src:			'src/hndl.js',
 				dest:			'build/hndl.js'
+			},
+
+			license:		{
+				src:			'LICENSE',
+				dest:			'build/LICENSE'
 			}
 		},
 
@@ -106,7 +188,7 @@ module.exports = function (grunt) {
 				 * The Copyright Banner
 				 */
 				banner:			'/**\n' +
-							' * RequireJS Mustache Plugin v<%= pkg.version %>\n' +
+							' * RequireJS Mustache Plugin v<%= pkg.version %> (git-<%= gitinfo.local.branch.current.shortSHA %>)\n' +
 							' * Compiled on <%= grunt.template.today("yyyy-mm-dd") %>\n' +
 							' *\n' +
 							' * Copyright (C) 2014 Johannes Donath <johanesd@evil-co.com>\n' +
@@ -144,5 +226,5 @@ module.exports = function (grunt) {
 	require ('load-grunt-tasks') (grunt, { scope: 'devDependencies' });
 
 	// register tasks
-	grunt.registerTask ('default', ['clean', 'jshint', 'uglify', 'copy', 'download']);
+	grunt.registerTask ('default', ['clean', 'gitinfo', 'jshint', 'uglify', 'copy', 'download', 'compress:tar', 'compress:zip', 'compress:gzip']);
 };
