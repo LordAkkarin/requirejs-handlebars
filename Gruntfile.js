@@ -45,6 +45,17 @@ module.exports = function (grunt) {
 		},
 
 		/**
+		 * Download dependencies for packaging
+		 */
+		download:		{
+
+			require:		{
+				src:			['http://requirejs.org/docs/release/2.1.14/minified/require.js', 'https://raw.githubusercontent.com/requirejs/text/latest/text.js'],
+				dest:			'build/'
+			}
+		},
+
+		/**
 		 * JSHint
 		 */
 		jshint:			{
@@ -132,9 +143,6 @@ module.exports = function (grunt) {
 	// load tasks
 	require ('load-grunt-tasks') (grunt, { scope: 'devDependencies' });
 
-	// TODO: Debug
-	grunt.loadNpmTasks ('grunt-download');
-
 	// register tasks
-	grunt.registerTask ('default', ['clean', 'jshint', 'uglify', 'copy']);
+	grunt.registerTask ('default', ['clean', 'jshint', 'uglify', 'copy', 'download']);
 };
